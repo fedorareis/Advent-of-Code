@@ -1,29 +1,14 @@
 with open('./input.txt') as f:
     result = 0
     decode = {
-        'A': 'Rock',
-        'B': 'Paper',
-        'C': 'Scissors',
-    }
-    value = {
-        'Rock': 1,
-        'Paper': 2,
-        'Scissors': 3,
+        'A': 1,
+        'B': 2,
+        'C': 3,
     }
     outcomePoints = {
         'X': 0,
         'Y': 3,
         'Z': 6,
-    }
-    win = {
-        'Rock': 'Paper',
-        'Paper': 'Scissors',
-        'Scissors': 'Rock',
-    }
-    lose = {
-        'Paper': 'Rock',
-        'Scissors': 'Paper',
-        'Rock': 'Scissors',
     }
     for line in f:
         line = line.strip()
@@ -32,10 +17,10 @@ with open('./input.txt') as f:
         outcome = parsed[1]
         result += outcomePoints[outcome]
         if outcome == 'Y':
-            result += value[opp]
+            result += opp
         elif outcome == 'Z':
-            result += value[win[opp]]
+            result += (opp % 3) + 1
         else:
-            result += value[lose[opp]]
+            result += opp - 1 if opp - 1 != 0 else 3
 
     print(result)
