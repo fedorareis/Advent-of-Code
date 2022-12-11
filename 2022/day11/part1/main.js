@@ -51,13 +51,13 @@ try {
 }
 const lcm = monkeys.reduce((a, b) => a * b.testVal, monkeys[0].testVal);
 
-while (rounds <= 10000) {
+while (rounds <= 20) {
   monkeys.forEach((monkey) => {
     while (monkey.items.length) {
       monkey.total++;
       let item = monkey.items.shift();
       item = monkey.operation(item);
-      item = item % lcm;
+      item = Math.floor(item / 3);
       let pass = monkey.test(item);
       monkeys[pass].items.push(item);
     }
