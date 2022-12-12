@@ -10,7 +10,7 @@ function nodeComp(node, char) {
   return nodeVal.localeCompare(charVal) >= 0 || nextChar(nodeVal) == charVal;
 }
 
-let result = 0;
+let result = Infinity;
 let input = [];
 let start = [];
 let end = [];
@@ -34,9 +34,9 @@ input.forEach((row, y) => {
   row.forEach((node, x) => {
     let temp = Array(nodes).fill(0);
     let nodeVal = node;
-    if (node == "S") {
+    if (node == "S" || node == "a") {
       nodeVal = "a";
-      start = nodeIdx;
+      start.push(nodeIdx);
     }
     if (node == "E") {
       nodeVal = "z";
@@ -59,6 +59,7 @@ input.forEach((row, y) => {
   });
 });
 
+// Dijkstra's algorithm implementation from https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
 // A Javascript program for Dijkstra's single
 // source shortest path algorithm.
 // The program is for adjacency matrix
@@ -84,7 +85,6 @@ function minDistance(dist, sptSet) {
   return min_index;
 }
 
-// Dijkstra's algorithm implementation from https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
 // Function that implements Dijkstra's
 // single source shortest path algorithm
 // for a graph represented using adjacency
@@ -134,10 +134,15 @@ function dijkstra(graph, src) {
     }
   }
 
-  // Print the distance to the end
-  console.log(dist[end]);
+  // return distance to the end
+  return dist[end];
 }
 
-dijkstra(adjMatrix, start);
-
 // This code is contributed by rag2127
+
+start.forEach((val) => {
+  const temp = dijkstra(adjMatrix, val);
+  result = temp < result ? temp : result;
+});
+
+console.log(result);
