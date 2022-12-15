@@ -55,24 +55,6 @@ function generatePairs(input) {
   return [res.minX, res.maxX, res.maxY, res.maxDistance, res.pairs];
 }
 
-function fillMap(xOffset, yOffset, pair, map) {
-  map[pair.sensor[1] + yOffset][pair.sensor[0] + xOffset] = "S";
-  map[pair.beacon[1] + yOffset][pair.beacon[0] + xOffset] = "B";
-  for (let y = -pair.distance; y <= pair.distance; y++) {
-    for (
-      let x = -Math.abs(Math.abs(y) - pair.distance);
-      x <= Math.abs(Math.abs(y) - pair.distance);
-      x++
-    ) {
-      if (
-        map[y + yOffset + pair.sensor[1]][x + xOffset + pair.sensor[0]] == "."
-      ) {
-        map[y + yOffset + pair.sensor[1]][x + xOffset + pair.sensor[0]] = "#";
-      }
-    }
-  }
-}
-
 function fillLine(xOffset, pair, line) {
   if (pair.sensor[1] == searchY) {
     line[pair.sensor[0] + xOffset] = "S";
@@ -82,7 +64,6 @@ function fillLine(xOffset, pair, line) {
   }
   for (let y = -pair.distance; y <= pair.distance; y++) {
     if (y + pair.sensor[1] == searchY) {
-      // console.log(pair.sensor, y);
       for (
         let x = -Math.abs(Math.abs(y) - pair.distance);
         x <= Math.abs(Math.abs(y) - pair.distance);
@@ -97,7 +78,6 @@ function fillLine(xOffset, pair, line) {
 }
 
 let result = 0;
-let map = [];
 
 try {
   input = fs
@@ -112,30 +92,12 @@ let [minX, maxX, maxY, maxDistance, pairs] = generatePairs(input);
 // shifts any negative vlaues to positive and
 // adds a buffer on the left for area covered by sensors
 const xOffset = -minX + maxDistance;
-const yOffset = maxDistance;
 
-// console.log(minX, maxX, maxY, maxDistance);
-// for (let i = 0; i <= maxY + yOffset + maxDistance; i++) {
-//   map.push(Array(maxX + xOffset + maxDistance).fill("."));
-// }
 let searchLine = Array(maxX + xOffset + maxDistance).fill(".");
 
-// pairs.forEach((pair) => {
-//   fillMap(xOffset, yOffset, pair, map);
-// });
-// fillMap(xOffset, yOffset, pairs[6], map);
 pairs.forEach((pair) => {
   fillLine(xOffset, pair, searchLine);
 });
-
-// console.log(searchLine.join(""));
-
-// printMap(map, yOffset);
-// map[yOffset + searchY].forEach((val) => {
-//   if (val != "." && val != "B") {
-//     result++;
-//   }
-// });
 
 searchLine.forEach((val) => {
   if (val != "." && val != "B") {
