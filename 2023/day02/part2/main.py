@@ -1,50 +1,25 @@
-conversion = {
-        "one": 1,
-        "two": 2,
-        "three": 3,
-        "four": 4,
-        "five": 5,
-        "six": 6,
-        "seven": 7,
-        "eight": 8,
-        "nine": 9
-    }
+# ex - Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 
 with open('./input.txt') as f:
     result = 0
     for line in f:
-        first = {
-            "val": 0,
-            "index": len(line),
-        }
-        last = {
-            "val": 0,
-            "index": 0,
-        }
-        found_first = False
-        
-        for k, v in conversion.items():
-            idx = line.find(k)
-            lidx = line.rfind(k)
-            if idx >= 0 and idx <= first["index"]:
-                first["index"] = idx
-                first["val"] = v
-            if lidx >= 0 and lidx >= last["index"]:
-                last["index"] = lidx
-                last["val"] = v
+        r = 0
+        g = 0
+        b = 0
 
-        for idx, val in enumerate(line):
-            try:
-                curr = int(val)
-                if idx <= first["index"]:
-                    first["index"] = idx
-                    first["val"] = curr
-                if idx >= last["index"]:
-                    last["index"] = idx
-                    last["val"] = curr
-            except:
-                pass
+        line = line.strip()
+        temp = line.split(": ")
+        matches = temp[1].split("; ")
+        for items in matches:
+            for cubes in items.split(", "):
+                res = cubes.split(" ")
+                if res[1] == "red" and r < int(res[0]):
+                    r = int(res[0])
+                elif res[1] == "green" and g < int(res[0]):
+                    g = int(res[0])
+                elif res[1] == "blue" and b < int(res[0]):
+                    b = int(res[0])
+                
+        result += (r*g*b)
         
-        result += int(str(first["val"]) + str(last["val"]))
-
     print(result)
