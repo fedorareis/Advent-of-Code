@@ -1,4 +1,11 @@
 import sys
+from itertools import islice
+from multiprocessing import Pool
+
+def batched(iterable, chunk_size):
+    iterator = iter(iterable)
+    while chunk := tuple(islice(iterator, chunk_size)):
+        yield chunk
 
 seeds = []
 seed2soil = []
@@ -30,7 +37,9 @@ def process(file):
         temp = line.split(":")
         if len(temp) == 2: 
             if temp[0] == "seeds":
-                seeds = [int(x) for x in temp[1].strip().split(" ")]
+                temp2 = [int(x) for x in temp[1].strip().split(" ")]
+                for batch in batched(temp2, 2):
+                    seeds.append(batch)
             else:
                 temp = temp[0].split(" ")
                 if temp[0] == "seed-to-soil":
@@ -75,10 +84,6 @@ def process(file):
 
 def populate(table, dest, src, len):
     len = len - 1
-    # while len >= 0:
-    #     table[src + len] = dest + len
-    #     len -= 1
-    # return table
     mapping = {
         "start": src,
         "end": src + len,
@@ -93,53 +98,37 @@ def convert(table, val):
             return mapping["dest"] + (val - mapping["start"])
     return val
 
+def calculate(val):
+    result = sys.maxsize
+    for seed in range(val[0], val[0] + val[1] - 1):
+        s2s = convert(seed2soil ,seed)
+        s2f = convert(soil2fert ,s2s)
+        f2w = convert(fert2water ,s2f)
+        w2l = convert(water2light ,f2w)
+        l2t = convert(light2temp ,w2l)
+        t2h = convert(temp2humid ,l2t)
+        h2l = convert(humid2loc ,t2h)
+    
+        if h2l < result:
+            result = h2l
+    
+    return result
 
 with open('./input.txt') as f:
     result = sys.maxsize
 
     process(f)
+    results = []
+    
+    if __name__ == '__main__':
+        with Pool(processes=10) as pool: 
+            results = pool.map(calculate, seeds)
+            #close the pool and wait for the work to finish
+            pool.close()
+            pool.join()
 
-    for val in seeds:
-        s2s = convert(seed2soil ,val)
-        # if val in seed2soil:
-        #     s2s = seed2soil[val]
-        s2f = convert(soil2fert ,s2s)
-        # if s2s in soil2fert:
-        #     s2f = soil2fert[s2s]
-        f2w = convert(fert2water ,s2f)
-        # if s2f in fert2water:
-        #     f2w = fert2water[s2f]
-        w2l = convert(water2light ,f2w)
-        # if f2w in water2light:
-        #     w2l = water2light[f2w]
-        l2t = convert(light2temp ,w2l)
-        # if w2l in light2temp:
-        #     l2t = light2temp[w2l]
-        t2h = convert(temp2humid ,l2t)
-        # if l2t in temp2humid:
-        #     t2h = temp2humid[l2t]
-        h2l = convert(humid2loc ,t2h)
-        # if t2h in humid2loc:
-        #     h2l = humid2loc[t2h]
-        
-        if h2l < result:
-            result = h2l
-        # print(val, s2s,s2f,f2w,w2l,l2t,t2h,h2l)
+        for val in results:
+            if val < result:
+                result = val
 
-    # print(seeds)
-    # print()
-    # print(seed2soil)
-    # print()
-    # print(soil2fert)
-    # print()
-    # print(fert2water)
-    # print()
-    # print(water2light)
-    # print()
-    # print(light2temp)
-    # print()
-    # print(temp2humid)
-    # print()
-    # print(humid2loc)
-    # print()
-    print(result)
+    print("final results:", result)
