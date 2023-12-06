@@ -1,34 +1,14 @@
 ex = [
     {
-        "time": 7,
-        "dist": 9,
-    },
-    {
-        "time": 15,
-        "dist": 40,
-    },
-    {
-        "time": 30,
-        "dist": 200,
+        "time": 71530,
+        "dist": 940200,
     }
 ]
 
 input = [
     {
-        "time": 54,
-        "dist": 302,
-    },
-    {
-        "time": 94,
-        "dist": 1476,
-    },
-    {
-        "time": 65,
-        "dist": 1029,
-    },
-    {
-        "time": 92,
-        "dist": 1404,
+        "time": 54946592,
+        "dist": 302147610291404,
     }
 ]
 
@@ -49,7 +29,7 @@ def most(race):
 if __name__ == '__main__':
     result = 1
 
-    for race in ex:
+    for race in input:
         min = least(race)
         max = most(race)
         result *= (max - min) + 1
