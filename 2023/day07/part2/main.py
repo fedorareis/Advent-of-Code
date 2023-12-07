@@ -12,7 +12,6 @@ card = {
     "A": 14,
     "K": 13,
     "Q": 12,
-    "J": 11,
     "T": 10,
     "9": 9,
     "8": 8,
@@ -22,6 +21,7 @@ card = {
     "4": 4,
     "3": 3,
     "2": 2,
+    "J": 1,
 }
 
 def compare(item1, item2):
@@ -43,7 +43,6 @@ def process(item):
         "A": 0,
         "K": 0,
         "Q": 0,
-        "J": 0,
         "T": 0,
         "9": 0,
         "8": 0,
@@ -53,6 +52,7 @@ def process(item):
         "4": 0,
         "3": 0,
         "2": 0,
+        "J": 0,
     }
 
     trip = False
@@ -60,37 +60,64 @@ def process(item):
 
     for card in hand:
         cards[card] += 1
+
+    orderedCards = sorted(cards.items(), key=lambda item: item[1], reverse=True)
+    # print(orderedCards)
     
-    for k, v in cards.items():
-        if v == 5:
+    # print(hand, cards)
+    for k, v in orderedCards:
+
+        wild = 0
+        if v != 0:
+            wild = v + cards["J"]
+        # print(k, v, cards["J"], trip, dub, wild)
+        
+        if v == 5 or wild == 5:
+            # print("five")
             five.append(item)
             return
-        if v == 4:
+        elif k == "J":
+            continue
+        elif v == 4 or wild == 4:
+            # print("four")
             four.append(item)
             return
-        if v == 3:
+        elif v == 3 or wild == 3:
             if dub:
+                # print("full")
                 full.append(item)
                 return
             else:
+                cards["J"] = (v-3) + cards["J"]
                 trip = True
-        if v == 2:
+        elif v == 2 or wild == 2:
+            if trip:
+                if cards["J"] == 0:
+                    # print("full")
+                    full.append(item)
+                    return
+                else:
+                    # print("three")
+                    three.append(item)
+                    return
             if dub:
+                # print("pair2")
                 pair2.append(item)
-                return
-            elif trip:
-                full.append(item)
                 return
             else:
                 dub = True
+                cards["J"] = (v-2) + cards["J"]
     
     if trip:
+        # print("three")
         three.append(item)
         return
     elif dub:
+        # print("pair")
         pair.append(item)
         return
     else:
+        # print("high")
         high.append(item)
 
 def score(group, rank):
@@ -113,6 +140,22 @@ with open('./input.txt') as f:
         line = line.strip()
         temp = line.split(" ")
         process(temp)
+
+    print("five:", len(five), sorted(five, key=cmp_to_key(compare)))
+    print("four:", len(four), sorted(four, key=cmp_to_key(compare)))
+    print("full:", len(full), sorted(full, key=cmp_to_key(compare)))
+    print("three:", len(three), sorted(three, key=cmp_to_key(compare)))
+    print("pair2:", len(pair2), sorted(pair2, key=cmp_to_key(compare)))
+    print("pair:", len(pair), sorted(pair, key=cmp_to_key(compare)))
+    print("high:", len(high), sorted(high, key=cmp_to_key(compare)))
+
+    # print("five:", len(five))
+    # print("four:", len(four))
+    # print("full:", len(full))
+    # print("three:", len(three))
+    # print("pair2:", len(pair2))
+    # print("pair:", len(pair))
+    # print("high:", len(high))
     
     rank, total = score(high, rank)
     result += total
