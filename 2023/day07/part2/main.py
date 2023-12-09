@@ -30,10 +30,8 @@ def compare(item1, item2):
     i = 0
     while i < len(hand1):
         if card[hand1[i]] < card[hand2[i]]:
-            # print(hand1[i], hand2[i], "less")
             return -1
         elif card[hand1[i]] > card[hand2[i]]:
-            # print(hand1[i], hand2[i], "more")
             return 1
         i += 1
 
@@ -62,29 +60,23 @@ def process(item):
         cards[card] += 1
 
     orderedCards = sorted(cards.items(), key=lambda item: item[1], reverse=True)
-    # print(orderedCards)
     
-    # print(hand, cards)
     for k, v in orderedCards:
 
         wild = 0
         if v != 0:
             wild = v + cards["J"]
-        # print(k, v, cards["J"], trip, dub, wild)
         
         if v == 5 or wild == 5:
-            # print("five")
             five.append(item)
             return
         elif k == "J":
             continue
         elif v == 4 or wild == 4:
-            # print("four")
             four.append(item)
             return
         elif v == 3 or wild == 3:
             if dub:
-                # print("full")
                 full.append(item)
                 return
             else:
@@ -93,15 +85,12 @@ def process(item):
         elif v == 2 or wild == 2:
             if trip:
                 if cards["J"] == 0:
-                    # print("full")
                     full.append(item)
                     return
                 else:
-                    # print("three")
                     three.append(item)
                     return
             if dub:
-                # print("pair2")
                 pair2.append(item)
                 return
             else:
@@ -109,24 +98,18 @@ def process(item):
                 cards["J"] = (v-2) + cards["J"]
     
     if trip:
-        # print("three")
         three.append(item)
         return
     elif dub:
-        # print("pair")
         pair.append(item)
         return
     else:
-        # print("high")
         high.append(item)
 
 def score(group, rank):
     total = 0
-    # print(group)
     group.sort(key=cmp_to_key(compare))
-    # print(group)
     for item in group:
-        # print(item, rank)
         total += (int(item[1]) * rank)
         rank += 1
     
@@ -140,22 +123,6 @@ with open('./input.txt') as f:
         line = line.strip()
         temp = line.split(" ")
         process(temp)
-
-    print("five:", len(five), sorted(five, key=cmp_to_key(compare)))
-    print("four:", len(four), sorted(four, key=cmp_to_key(compare)))
-    print("full:", len(full), sorted(full, key=cmp_to_key(compare)))
-    print("three:", len(three), sorted(three, key=cmp_to_key(compare)))
-    print("pair2:", len(pair2), sorted(pair2, key=cmp_to_key(compare)))
-    print("pair:", len(pair), sorted(pair, key=cmp_to_key(compare)))
-    print("high:", len(high), sorted(high, key=cmp_to_key(compare)))
-
-    # print("five:", len(five))
-    # print("four:", len(four))
-    # print("full:", len(full))
-    # print("three:", len(three))
-    # print("pair2:", len(pair2))
-    # print("pair:", len(pair))
-    # print("high:", len(high))
     
     rank, total = score(high, rank)
     result += total

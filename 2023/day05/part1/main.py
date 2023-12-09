@@ -75,10 +75,6 @@ def process(file):
 
 def populate(table, dest, src, len):
     len = len - 1
-    # while len >= 0:
-    #     table[src + len] = dest + len
-    #     len -= 1
-    # return table
     mapping = {
         "start": src,
         "end": src + len,
@@ -101,45 +97,14 @@ with open('./input.txt') as f:
 
     for val in seeds:
         s2s = convert(seed2soil ,val)
-        # if val in seed2soil:
-        #     s2s = seed2soil[val]
         s2f = convert(soil2fert ,s2s)
-        # if s2s in soil2fert:
-        #     s2f = soil2fert[s2s]
         f2w = convert(fert2water ,s2f)
-        # if s2f in fert2water:
-        #     f2w = fert2water[s2f]
         w2l = convert(water2light ,f2w)
-        # if f2w in water2light:
-        #     w2l = water2light[f2w]
         l2t = convert(light2temp ,w2l)
-        # if w2l in light2temp:
-        #     l2t = light2temp[w2l]
         t2h = convert(temp2humid ,l2t)
-        # if l2t in temp2humid:
-        #     t2h = temp2humid[l2t]
         h2l = convert(humid2loc ,t2h)
-        # if t2h in humid2loc:
-        #     h2l = humid2loc[t2h]
         
         if h2l < result:
             result = h2l
-        # print(val, s2s,s2f,f2w,w2l,l2t,t2h,h2l)
 
-    # print(seeds)
-    # print()
-    # print(seed2soil)
-    # print()
-    # print(soil2fert)
-    # print()
-    # print(fert2water)
-    # print()
-    # print(water2light)
-    # print()
-    # print(light2temp)
-    # print()
-    # print(temp2humid)
-    # print()
-    # print(humid2loc)
-    # print()
     print(result)

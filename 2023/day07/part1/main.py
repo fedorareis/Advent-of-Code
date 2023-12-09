@@ -30,10 +30,8 @@ def compare(item1, item2):
     i = 0
     while i < len(hand1):
         if card[hand1[i]] < card[hand2[i]]:
-            # print(hand1[i], hand2[i], "less")
             return -1
         elif card[hand1[i]] > card[hand2[i]]:
-            # print(hand1[i], hand2[i], "more")
             return 1
         i += 1
 
@@ -95,11 +93,8 @@ def process(item):
 
 def score(group, rank):
     total = 0
-    # print(group)
     group.sort(key=cmp_to_key(compare))
-    # print(group)
     for item in group:
-        # print(item, rank)
         total += (int(item[1]) * rank)
         rank += 1
     
