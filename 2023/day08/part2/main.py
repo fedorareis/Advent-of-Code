@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 ex = {
     "11A": ("11B", "XXX"),
     "11B": ("XXX", "11Z"),
@@ -766,6 +769,16 @@ input = {
 inputNav = "LRRLRRLRRLRRRLRRLRRRLRRLRRRLRLRLLRLRLRRLLLRLRLRRRLRRLRLRRRLRRLRRLRRLLLRRLRRRLRRRLRLLRRLRLLRRLRRRLRRLRLRRRLRLRLRRLRLRRRLLRRRLLRRRLRLRRRLRRLLRRLRRRLRRLRRLLRRLRRLRRRLLLRRRLRRLRRLRRLRLRRRLRRLLLLRLRRLRRRLRLLRRLRLLRRLRRRLRRRLRRRLLRRLRRLRRLRRRLRRLRRRLLRLRRRLRRRLRRRLLRRRLRRLRRRR"
 inputStart = ["AAA", "RLA", "QLA", "QFA", "RXA", "JSA"]
 
+def gcd(a, b):
+    """Return greatest common divisor using Euclid's Algorithm."""
+    while b:      
+        a, b = b, a % b
+    return a
+
+def lcm(a, b):
+    """Return lowest common multiple."""
+    return a * b // gcd(a, b)
+
 def step(curr, dir, network):
     node = ""
     if dir == "L":
@@ -784,30 +797,32 @@ def atEnd(curr):
 
 def navigate(nav, network, start):
     found = False
-    curr = start
+    curr = network[start]
+    node = start
     count = 0
 
     while not found:
         for dir in nav:
             count += 1
-            end = True
-
-            for idx, item in enumerate(curr):
-                node = step(item, dir, network)
-                curr[idx] = node
-                if node[-1:] != "Z":
-                    end  = False
+            if dir == "L":
+                node = curr[0]
+            elif dir == "R":
+                node = curr[1]
             
-            if end:
+            if node[-1] == "Z":
                 found = True
                 break
+
+            curr = network[node]
 
     return count
 
 if __name__ == '__main__':
     result = 0
+    loop = []
 
-    # result = navigate(exNav, ex, exStart)
-    result = navigate(inputNav, input, inputStart)
+    for start in inputStart:
+        loop.append(navigate(inputNav, input, start))
+    result = reduce(lcm, loop)
 
     print(result)
