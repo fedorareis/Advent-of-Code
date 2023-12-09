@@ -1,20 +1,15 @@
-ex1 = {
-    "AAA": ("BBB", "CCC"),
-    "BBB": ("DDD", "EEE"),
-    "CCC": ("ZZZ", "GGG"),
-    "DDD": ("DDD", "DDD"),
-    "EEE": ("EEE", "EEE"),
-    "GGG": ("GGG", "GGG"),
-    "ZZZ": ("ZZZ", "ZZZ"),
+ex = {
+    "11A": ("11B", "XXX"),
+    "11B": ("XXX", "11Z"),
+    "11Z": ("11B", "XXX"),
+    "22A": ("22B", "XXX"),
+    "22B": ("22C", "22C"),
+    "22C": ("22Z", "22Z"),
+    "22Z": ("22B", "22B"),
+    "XXX": ("XXX", "XXX"),
 }
-ex1Nav = "RL"
-
-ex2 = {
-    "AAA": ("BBB", "BBB"),
-    "BBB": ("AAA", "ZZZ"),
-    "ZZZ": ("ZZZ", "ZZZ"),
-}
-ex2Nav = "LLR"
+exNav = "LR"
+exStart = ["11A", "22A"]
 
 input = {
     "LRL": ("MCG", "TRC"),
@@ -769,34 +764,50 @@ input = {
     "FNQ": ("LCQ", "QHG"),
 }
 inputNav = "LRRLRRLRRLRRRLRRLRRRLRRLRRRLRLRLLRLRLRRLLLRLRLRRRLRRLRLRRRLRRLRRLRRLLLRRLRRRLRRRLRLLRRLRLLRRLRRRLRRLRLRRRLRLRLRRLRLRRRLLRRRLLRRRLRLRRRLRRLLRRLRRRLRRLRRLLRRLRRLRRRLLLRRRLRRLRRLRRLRLRRRLRRLLLLRLRRLRRRLRLLRRLRLLRRLRRRLRRRLRRRLLRRLRRLRRLRRRLRRLRRRLLRLRRRLRRRLRRRLLRRRLRRLRRRR"
+inputStart = ["AAA", "RLA", "QLA", "QFA", "RXA", "JSA"]
 
-def navigate(nav, network):
+def step(curr, dir, network):
+    node = ""
+    if dir == "L":
+        node = network[curr][0]
+    elif dir == "R":
+        node = network[curr][1]
+    
+    return node
+
+def atEnd(curr):
+    for item in curr:
+        if item[-1:] != "Z":
+            return False
+    
+    return True
+
+def navigate(nav, network, start):
     found = False
-    curr = network["AAA"]
-    node = "AAA"
+    curr = start
     count = 0
 
     while not found:
         for dir in nav:
             count += 1
-            if dir == "L":
-                node = curr[0]
-            elif dir == "R":
-                node = curr[1]
+            end = True
+
+            for idx, item in enumerate(curr):
+                node = step(item, dir, network)
+                curr[idx] = node
+                if node[-1:] != "Z":
+                    end  = False
             
-            if node == "ZZZ":
+            if end:
                 found = True
                 break
-
-            curr = network[node]
 
     return count
 
 if __name__ == '__main__':
     result = 0
 
-    # result = navigate(ex1Nav, ex1)
-    # result = navigate(ex2Nav, ex2)
-    result = navigate(inputNav, input)
+    # result = navigate(exNav, ex, exStart)
+    result = navigate(inputNav, input, inputStart)
 
     print(result)
