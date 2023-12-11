@@ -1,7 +1,7 @@
 from multiprocessing import Pool
 
 
-def insert(s, newstring, index, nofail=False):
+def replacer(s, newstring, index, nofail=False):
     # raise an error if index is outside of the string
     if not nofail and index not in range(len(s)):
         raise ValueError("index outside given string")
@@ -13,18 +13,18 @@ def insert(s, newstring, index, nofail=False):
         return s + newstring
 
     # insert the new string between "slices" of the original
-    return s[:index] + newstring + s[index:]
+    return s[:index] + newstring + s[index + 1:]
 
 def expandCol(universe):
     for idx in reversed(range(len(universe[0]))):
         empty = True
         for row in universe:
-            if row[idx] != ".":
+            if not (row[idx] == "." or row[idx] == "*"):
                 empty = False
         
         if empty:
             for id2, row in enumerate(universe):
-                universe[id2] = insert(row, ".", idx)
+                universe[id2] = replacer(row, "*", idx)
     
     return universe
 
@@ -33,10 +33,12 @@ def expandRow(universe):
     for row in universe:
         empty = True
         for col in row:
-            if col != ".":
+            if not (col == "." or col == "*"):
                 empty = False
-        newUniverse.append(row)
         if empty:
+            blank = "*" * len(row)
+            newUniverse.append(blank)
+        else:
             newUniverse.append(row)
     
     return newUniverse
@@ -53,7 +55,7 @@ def findGalaxies(universe, galaxies):
 
     return galaxies
 
-def getPairs(galaxies):
+def getPairs(galaxies, universe):
     pairs = []
     for idx, start in enumerate(galaxies):
         left = []
@@ -63,8 +65,8 @@ def getPairs(galaxies):
                 left.append(end)
             else:
                 right.append(end)
-        pairs.append([start, right])
-        pairs.append([start, left])
+        pairs.append([start, right, universe])
+        pairs.append([start, left, universe])
     return pairs
 
 def findEdges(start, ends):
@@ -90,6 +92,7 @@ def shortestPath(temp):
     visited = {}
     start = temp[0]
     ends = temp[1]
+    universe = temp[2]
     # print("starting:", start, end)
     rl, rh, cl, ch = findEdges(start, ends)
     visited[start] = True
@@ -110,17 +113,26 @@ def shortestPath(temp):
             new = (curr[0], curr[1] - 1)
             if new not in visited:
                 visited[new] = True
-                queue.append((new, dist + 1))
+                if universe[new[0]][new[1]] == '*':
+                    queue.append((new, dist + 1000000))
+                else:
+                    queue.append((new, dist + 1))
         if curr[0] < rh:
             new = (curr[0] + 1, curr[1])
             if new not in visited:
                 visited[new] = True
-                queue.append((new, dist + 1))
+                if universe[new[0]][new[1]] == '*':
+                    queue.append((new, dist + 1000000))
+                else:
+                    queue.append((new, dist + 1))
         if curr[1] < ch:
             new = (curr[0], curr[1] + 1)
             if new not in visited:
                 visited[new] = True
-                queue.append((new, dist + 1))
+                if universe[new[0]][new[1]] == '*':
+                    queue.append((new, dist + 1000000))
+                else:
+                    queue.append((new, dist + 1))
     
     return total
 
@@ -135,7 +147,7 @@ if __name__ == '__main__':
 
     universe = expand(universe)
     galaxies = findGalaxies(universe, galaxies)
-    pairs = getPairs(galaxies)
+    pairs = getPairs(galaxies, universe)
     print(len(pairs))
 
     with Pool(processes=None) as pool: 
