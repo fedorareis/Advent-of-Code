@@ -40,7 +40,7 @@ with open("./input.txt") as f:
     for idx, val in enumerate(fs):
         # print(str(idx) + "," + str(val))
         if val == ".":
-            break
+            continue
 
         temp = idx * int(val)
         # print(temp)
