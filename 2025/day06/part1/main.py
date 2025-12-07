@@ -1,18 +1,25 @@
 with open("./input.txt") as f:
     result = 0
-    ranges = []
-    ranges_done = False
+    problems = []
     for line in f:
         line = line.strip()
-        if line == "":
-            ranges_done = True
-        elif not ranges_done:
-            ranges.append([int(x) for x in line.split("-")])
+        temp = line.split()
+        if temp[0] != "+" and temp[0] != "*":
+            if len(problems) == 0:
+                for val in temp:
+                    problems.append([int(val)])
+            else:
+                for i in range(len(temp)):
+                    problems[i].append(int(temp[i]))
         else:
-            val = int(line)
-            for range in ranges:
-                if val >= range[0] and val <= range[1]:
-                    result += 1
-                    break
+            for i in range(len(temp)):
+                if temp[i] == "*":
+                    val = 1
+                    for x in problems[i]:
+                        val *= x
+                    result += val
+                if temp[i] == "+":
+                    for x in problems[i]:
+                        result += x
 
     print(result)
