@@ -70,15 +70,5 @@ with open("./input.txt") as f:
     result = traverse(lookup["S"], 0)
 
     print(result)
-
-# for i in range(len(line)):
-#         if prev[i] == "S":
-#             line[i] = "|"
-
-#         if prev[i] == "|":
-#             if line[i] == "^":
-#                 line[i - 1] = "|"
-#                 line[i + 1] = "|"
-#                 result += 1
-#             else:
-#                 line[i] = "|"
+    # 3030 is too low
+    # cancelled run after 5 hours
